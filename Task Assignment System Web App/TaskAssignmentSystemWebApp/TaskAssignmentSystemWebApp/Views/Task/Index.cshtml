@@ -1,0 +1,85 @@
+﻿@using TaskAssignmentSystemWebApp.Constants
+@{
+    ViewData["Title"] = "Task";
+}
+
+<link href="~/css/taskstyles/taskstyle.css" rel="stylesheet" />
+
+@* region Task Body*@
+
+<div class="container container-fluid my-3">
+    <div class="row">
+        @* NEW TASK  *@
+        <div class="col-12 col-sm-12 col-md-12 col-lg-5 col-xl-4 p-2">
+            @Html.Partial("~/Views/task/_addnewtaskpartialview.cshtml")
+        </div>
+
+        @* LIST OF TASKS *@
+        <div class="col-12 col-sm-12 col-md-12 col-lg-7 col-xl-8 p-2">
+            <div class="col" id="taskListTablePartialViewDiv"></div>
+        </div>
+    </div>
+</div>
+
+@* endRegion *@
+
+<script>
+    $(function () {
+        loadTaskListTablePartialView = function (dataToLoad) {
+            $.post('@Url.Action("LoadTaskListTablePartialView", "Task")', { dataToLoad: dataToLoad }, function (response) {
+                $("#taskListTablePartialViewDiv").html(response);
+                if (response == null) {
+                    showAlertDialog({
+                        icon: 'warning',
+                        title: '@GlobalConstants.ErrorMessage',
+                    });
+                }
+            });
+        };
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        //Floating Label Script Init
+        floatingLabelScriptInit();
+
+        getAllTaskList();
+    });
+</script>
+
+<script>
+    function getAllTaskList(dataToLoad) {
+        //Load All Tasks Data
+        $.ajax({
+            type: "POST",
+            url: "/Task/GetAllTasks",
+            data: {
+                dataToLoad: dataToLoad, // Can be pagination/filter data later for the task
+            },
+            dataType: "JSON",
+            success: function (response) {
+                if (response != null) {
+                    loadTaskListTablePartialView(response);
+                } else {
+                    showAlertDialog({
+                        icon: 'error',
+                        title: 'Something Went Wrong. Fetch Task Data Failed'
+                    });
+                }
+            },
+            failure: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Failure'
+                });
+            },
+            error: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Error'
+                });
+            }
+        });
+    }
+</script>

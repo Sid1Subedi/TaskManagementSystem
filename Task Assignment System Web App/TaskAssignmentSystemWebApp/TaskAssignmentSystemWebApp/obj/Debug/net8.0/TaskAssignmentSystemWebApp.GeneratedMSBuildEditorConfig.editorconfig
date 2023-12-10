@@ -1,0 +1,79 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = TaskAssignmentSystemWebApp
+build_property.RootNamespace = TaskAssignmentSystemWebApp
+build_property.ProjectDir = H:\Bibek Projects\Energy International Task Assignment System\Task Assignment System Web App\TaskAssignmentSystemWebApp\TaskAssignmentSystemWebApp\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = H:\Bibek Projects\Energy International Task Assignment System\Task Assignment System Web App\TaskAssignmentSystemWebApp\TaskAssignmentSystemWebApp
+build_property._RazorSourceGeneratorDebug = 
+
+[H:/Bibek Projects/Energy International Task Assignment System/Task Assignment System Web App/TaskAssignmentSystemWebApp/TaskAssignmentSystemWebApp/Views/Employee/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Bibek Projects/Energy International Task Assignment System/Task Assignment System Web App/TaskAssignmentSystemWebApp/TaskAssignmentSystemWebApp/Views/Employee/_AddNewEmployeePartialView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVcX0FkZE5ld0VtcGxveWVlUGFydGlhbFZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Bibek Projects/Energy International Task Assignment System/Task Assignment System Web App/TaskAssignmentSystemWebApp/TaskAssignmentSystemWebApp/Views/Employee/_EmployeeListPartialView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVcX0VtcGxveWVlTGlzdFBhcnRpYWxWaWV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Bibek Projects/Energy International Task Assignment System/Task Assignment System Web App/TaskAssignmentSystemWebApp/TaskAssignmentSystemWebApp/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Bibek Projects/Energy International Task Assignment System/Task Assignment System Web App/TaskAssignmentSystemWebApp/TaskAssignmentSystemWebApp/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Bibek Projects/Energy International Task Assignment System/Task Assignment System Web App/TaskAssignmentSystemWebApp/TaskAssignmentSystemWebApp/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Bibek Projects/Energy International Task Assignment System/Task Assignment System Web App/TaskAssignmentSystemWebApp/TaskAssignmentSystemWebApp/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Bibek Projects/Energy International Task Assignment System/Task Assignment System Web App/TaskAssignmentSystemWebApp/TaskAssignmentSystemWebApp/Views/Task/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFza1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Bibek Projects/Energy International Task Assignment System/Task Assignment System Web App/TaskAssignmentSystemWebApp/TaskAssignmentSystemWebApp/Views/Task/_AddNewTaskPartialView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFza1xfQWRkTmV3VGFza1BhcnRpYWxWaWV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Bibek Projects/Energy International Task Assignment System/Task Assignment System Web App/TaskAssignmentSystemWebApp/TaskAssignmentSystemWebApp/Views/Task/_TaskListTablePartialView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFza1xfVGFza0xpc3RUYWJsZVBhcnRpYWxWaWV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Bibek Projects/Energy International Task Assignment System/Task Assignment System Web App/TaskAssignmentSystemWebApp/TaskAssignmentSystemWebApp/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Bibek Projects/Energy International Task Assignment System/Task Assignment System Web App/TaskAssignmentSystemWebApp/TaskAssignmentSystemWebApp/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Bibek Projects/Energy International Task Assignment System/Task Assignment System Web App/TaskAssignmentSystemWebApp/TaskAssignmentSystemWebApp/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-85a2f5514f

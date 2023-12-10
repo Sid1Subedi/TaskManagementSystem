@@ -1,0 +1,281 @@
+﻿<div class="container shadow p-3 mb-5 bg-white roundedBody">
+    <div class="card">
+        <div class="card-header text-white newTaskCardHeader">
+            <h5 class="card-title text-center m-0">
+                NEW TASK
+            </h5>
+        </div>
+        <div class="card-body">
+            @* TASK NAME *@
+            <div class="d-flex flex-row align-items-center form-outline inputTaskName" style="margin-bottom: 16px;">
+                <i class="fas fa-list-ul fa-lg me-3"></i>
+                <div class="form-outline flex-fill mb-0 inner-addon left-addon field-wrapper">
+                    <input type="text" name="TaskName" id="TaskName" class="form-control shadow-none text-capitalize" value="">
+                    <label class="field-placeholder"><span>Task Name</span></label>
+                </div>
+            </div>
+            @* TASK DESCRIPTION *@
+            <div class="d-flex flex-row align-items-center form-outline inputTaskDescription" style="margin-bottom: 16px;">
+                <i class="fas fa-font fa-lg me-3"></i>
+                <div class="form-outline flex-fill mb-0 inner-addon left-addon field-wrapper">
+                    <input type="text" name="TaskDescription" id="TaskDescription" class="form-control shadow-none text-capitalize" value="">
+                    <label class="field-placeholder"><span>Task Description</span></label>
+                </div>
+            </div>
+            @* LIST OF EMPLOYEE IN DROPDOWN *@
+            @* <label class="field-placeholder select2Label" for="SelectEmployee"><span>Assign To Employee</span></label> *@
+            <div class="d-flex flex-row align-items-center form-outline inoutSelectEmployee" style="margin-bottom: 16px !important;">
+                <i class="fas fa-user fa-lg me-3 fa-lg"></i>
+                <div class="form-outline flex-fill mb-0 inner-addon left-addon field-wrapper">
+                    <select id="SelectEmployee" class="form-control" placeholder="" required multiple="multiple"></select>
+                    <label class="field-placeholder select2Label" for="SelectEmployee"><span>Assign To Employee</span></label>
+                </div>
+            </div>
+            @* BUTTON *@
+            <button type="submit" class="btn btn-md btn-block custom-btn px-3 waves-effect waves-light rounded-pill w-100 shadow-sm" onclick="return onSubmitBtnClickedAddNewTask();">
+                Add Task
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        getAllEmployeeList();
+    });
+</script>
+
+@* SELECT2 *@
+<script>
+    function getDropdownListOfAllEmployeesSelect2(employeeListDataOptions, idToLoad) {
+        var employeesList = JSON.parse(employeeListDataOptions).map(function (employee) {
+            return {
+                id: employee.EmployeeId.toString(),
+                text: employee.EmployeeName
+            };
+        });
+
+        $('#SelectEmployee').select2({
+            data: employeesList,
+            placeholder: {
+                id: '-1', // the value of the option
+                text: 'Select Employee(s)'
+            },
+            allowClear: true
+        });
+
+        if (idToLoad) {
+            $('#SelectEmployee').val(idToLoad.split(',')).trigger('change');
+        }
+    }
+</script>
+
+<script>
+    function onSubmitBtnClickedAddNewTask() {
+
+        // Prevent the form from actually submitting, if we plan to Use Form Tag in the Future
+        event.preventDefault();
+
+        var taskNameElem = $("#TaskName");
+        var taskRoleElem = $("#TaskDescription");
+        var selectedEmpElem = $('#SelectEmployee');
+
+        if (validateTaskInputData() == false) {
+            return;
+        }
+
+        var addNewTaskObj = {};
+
+        addNewTaskObj.taskName = taskNameElem.val().trim();
+        addNewTaskObj.taskDescription = taskRoleElem.val().trim();
+        addNewTaskObj.assignedEmployeeIds = selectedEmpElem.val();
+
+        var jsonStringfyAddNewTaskData = JSON.stringify(addNewTaskObj);
+
+        $.ajax({
+            type: "POST",
+            url: "/Task/CreateNewTask",
+            data: {
+                dataToLoad: jsonStringfyAddNewTaskData
+            },
+            dataType: "JSON",
+            success: function (response) {
+                if (response != null) {
+                    try {
+                        var createdTaskObj = JSON.parse(response);
+
+                        showAlertDialog({
+                            icon: 'success',
+                            title: "Success",
+                            functionToCall: function () {
+                                addNewTaskAfterCreation({
+                                    taskId: createdTaskObj.TaskId,
+                                    taskName: createdTaskObj.TaskName,
+                                    taskDescription: createdTaskObj.TaskDescription,
+                                    assignedEmployees: createdTaskObj.AssignedEmployees
+                                });
+
+                                // Clear the values after add success
+                                clearAddTaskInputValues();
+                            },
+                        });
+                    }
+                    catch (ex) {
+                        showAlertDialog({
+                            icon: 'warning',
+                            title: response,
+                        });
+                    }
+                } else {
+                    showAlertDialog({
+                        icon: 'error',
+                        title: "Something Went Wrong. Add New Employee Failed",
+                    });
+                }
+            },
+            failure: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: "Something Went Wrong Failure",
+                });
+            },
+            error: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: "Something Went Wrong Error",
+                });
+            }
+        });
+    }
+</script>
+
+<script>
+    function validateTaskInputData() {
+        var taskNameElem = $("#TaskName");
+        var taskDescriptionElem = $("#TaskDescription");
+        //Task Name Validation Starts Here
+
+        if (!taskNameElem.val().trim()) {
+            showAlertDialog({
+                icon: 'warning',
+                title: "Task Name Cannot be Empty",
+                functionToCall: taskNameElem.focus(),
+            });
+            return false;
+        }
+
+        if (checkAtLeastOneString(taskNameElem.val()) == false) {
+            showAlertDialog({
+                icon: 'warning',
+                title: "Task Name Should Contain at-least one character And Not Start With Number",
+                functionToCall: taskNameElem.focus()
+            });
+            return false;
+        }
+
+        if (notAllowSpecialCharacter(taskNameElem.val().trim()) == false) {
+            showAlertDialog({
+                icon: 'warning',
+                title: "Task Name Should Not Have Special Characters",
+                functionToCall: taskNameElem.focus()
+            });
+            return false;
+        }
+
+        //Task Name Validation Ends Here
+
+        // Task Description Validation Starts Here
+
+        if (!taskDescriptionElem.val().trim()) {
+            showAlertDialog({
+                icon: 'warning',
+                title: "Task Description Cannot be Empty",
+                functionToCall: taskDescriptionElem.focus(),
+            });
+            return false;
+        }
+
+        // Task Description Validation Ends Here
+    }
+
+    function checkAtLeastOneString(value) {
+        return /^[a-zA-Z\u0621-\u064A]/i.test(value);
+    }
+
+    function notAllowSpecialCharacter(value) {
+        return /^[a-zA-Z0-9 ]*$/i.test(value);
+    }
+</script>
+
+<script>
+    function addNewTaskAfterCreation({ taskId = null, taskName = null, taskDescription = null, assignedEmployees = null } = {}) {
+        // Create the HTML for the new task row with a delete button
+        var newRow = `
+                    <tr id="task-${taskId}" onclick="onTaskRowClick('task-${taskId}');">
+                <td class="align-middle">
+                    <div class="p-3 ms-auto deleteBtn d-flex align-items-center justify-content-center" onclick="onTaskDeleteBtnClick('task-${taskId}', '${taskName}');">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </div>
+                </td>
+                <td class="align-middle">${taskId}</td>
+                <td class="align-middle text-capitalize">${taskName}</td>
+                <td class="align-middle text-capitalize">${taskDescription}</td>
+                <td class="align-middle text-capitalize">
+                    ${assignedEmployees && assignedEmployees.length > 0
+                ? assignedEmployees.map(e => e.EmployeeName).join(', ')
+                : '<span>No assigned employees</span>'
+            }
+                </td>
+            </tr>
+        `;
+
+        // Prepend the new row to the table
+        $('#taskTable tbody').prepend(newRow);
+    }
+
+</script>
+
+<script>
+    function clearAddTaskInputValues() {
+        // Clear Inputs and Remove Floating Label Up
+        $("#TaskName").val('').closest(".field-wrapper").removeClass("hasValue");
+        $("#TaskDescription").val('').closest(".field-wrapper").removeClass("hasValue");
+        $('#SelectEmployee').val('').trigger('change');
+    }
+</script>
+
+<script>
+    function getAllEmployeeList(dataToLoad) {
+        //Load All Employees Data
+        $.ajax({
+            type: "POST",
+            url: "/Employee/GetAllEmployees",
+            data: {
+                dataToLoad: dataToLoad, // Can be pagination/filter data later for the task
+            },
+            dataType: "JSON",
+            success: function (response) {
+                if (response != null) {
+                    getDropdownListOfAllEmployeesSelect2(response);
+                } else {
+                    showAlertDialog({
+                        icon: 'error',
+                        title: 'Something Went Wrong. Fetch Employee Data Failed'
+                    });
+                }
+            },
+            failure: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Failure'
+                });
+            },
+            error: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Error'
+                });
+            }
+        });
+    }
+</script>

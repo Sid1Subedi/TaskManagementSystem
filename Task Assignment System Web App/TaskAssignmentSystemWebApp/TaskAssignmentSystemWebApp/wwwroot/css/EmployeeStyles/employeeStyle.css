@@ -1,0 +1,67 @@
+﻿.employeeMainDiv {
+    position: relative;
+}
+
+.newEmployeeDiv {
+    position: absolute;
+    top: 0;
+    right: 7%;
+    z-index: 1001;
+}
+
+.roundedBody {
+    border-radius: 14px;
+}
+
+.addEmployeeBtn {
+    background-color: #36324e;
+    color: #ffffff;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 2px 3px rgba(38,38,38,0.5);
+}
+
+    .addEmployeeBtn:hover{
+        color: #ffffff;
+    }
+
+    .employeeDiv {
+        background-color: #FFFFFF;
+        border-radius: 0 0 25px 25px;
+        box-shadow: 0 2px 3px rgba(38,38,38,0.5);
+        display: none;
+    }
+
+.newEmployeeTitleDiv {
+    background-color: #36324e;
+    padding: 5px;
+}
+
+.employeeCardBody {
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.employeeCardBodyIdLabel {
+    background-color: #36324e;
+    border-radius: 5px 0px 0px 5px;
+}
+
+.deleteBtn {
+    color: #000000;
+    background-color: transparent;
+    transition: background-color 0.3s;
+}
+
+.deleteBtn:hover {
+    background-color: #ff0000;
+}
+
+.deleteBtn:hover i {
+    color: #ffffff;
+    transform: scale(1.2);
+    transition: transform 0.3s ease-in-out;
+}
+
+.assignedTask {
+    width: 80% !important;
+}

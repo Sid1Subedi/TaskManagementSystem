@@ -1,0 +1,79 @@
+﻿@using TaskAssignmentSystemWebApp.Constants
+@{
+    ViewData["Title"] = "Employee";
+}
+
+<link href="~/css/employeestyles/employeestyle.css" rel="stylesheet" />
+
+@* EMPLOYEE REGION  *@
+
+<div class="employeeMainDiv">
+    @* Add New Employee Div Partial View *@
+    @Html.Partial("~/Views/Employee/_AddNewEmployeePartialView.cshtml")
+
+    @* Employee List Div Partial View *@
+    <div id="employeeContainerPartialView"></div>
+</div>
+
+@* endRegion *@
+
+<script>
+    $(function () {
+        loadEmployeeListPartialView = function (dataToLoad) {
+            $.post('@Url.Action("LoadEmployeeListPartialView", "Employee")', { dataToLoad: dataToLoad }, function (response) {
+                $("#employeeContainerPartialView").html(response);
+                if (response == null) {
+                    showAlertDialog({
+                        icon: 'warning',
+                        title: '@GlobalConstants.ErrorMessage',
+                    });
+                }
+            });
+        };
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        //Floating Label Script Init
+        floatingLabelScriptInit();
+
+        getAllEmployeeList();
+    });
+</script>
+
+<script>
+    function getAllEmployeeList(dataToLoad) {
+        //Load All Employees Data
+        $.ajax({
+            type: "POST",
+            url: "/Employee/GetAllEmployees",
+            data: {
+                dataToLoad: dataToLoad, // Can be pagination/filter data later for the task
+            },
+            dataType: "JSON",
+            success: function (response) {
+                if (response != null) {
+                    loadEmployeeListPartialView(response);
+                } else {
+                    showAlertDialog({
+                        icon: 'error',
+                        title: 'Something Went Wrong. Fetch Employee Data Failed'
+                    });
+                }
+            },
+            failure: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Failure'
+                });
+            },
+            error: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Error'
+                });
+            }
+        });
+    }
+</script>

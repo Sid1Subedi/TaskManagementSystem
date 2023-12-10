@@ -1,0 +1,233 @@
+﻿@using TaskAssignmentSystemWebApp.Models.Task
+@{
+    List<TaskResponseModel> taskResponseModelList = new();
+
+    if (ViewBag.Success != null)
+    {
+        taskResponseModelList = ViewBag.Success;
+    }
+}
+
+@* Region PopUp Div For OnCLick Starts Here *@
+
+<!-- Modal -->
+<div class="modal fade" id="taskDetailsModal" tabindex="-1" role="dialog" aria-labelledby="taskDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskDetailsModalLabel">Task Details</h5>
+                <button id="closeTaskDetailsModal" type="button" class="close btn btn-danger shadow-none" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">
+                        <i class="fa-solid fa-xmark"></i>
+                    </span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Task ID: <span id="taskModalId" class="text-capitalize"></span></p>
+                <p>Task Name: <span id="taskModalName" class="text-capitalize"></span></p>
+                <p>Task Description: <span id="taskModalDescription" class="text-capitalize"></span></p>
+                <p>Assigned Employees: <span id="taskModalAssignedEmployees" class="text-capitalize"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Region PopUp Div For OnClick Ends Here *@
+
+<div class="container shadow p-3 mb-5 bg-white roundedBody table-responsive">
+    <table id="taskTable" class="taskTable table table-bordered table-hover table-striped text-center">
+        <thead>
+            <tr class="text-white">
+                <th class="align-middle">Actions</th>
+                <th class="align-middle">#</th>
+                <th class="align-middle">Task Name</th>
+                <th class="align-middle">Description</th>
+                <th class="align-middle">Assigned to</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < taskResponseModelList.Count; i++)
+            {
+                <tr id="task-@taskResponseModelList[i].TaskId" onclick="onTaskRowClick('task-@taskResponseModelList[i].TaskId');">
+                    <td class="align-middle">
+                        <div class="p-3 ms-auto deleteBtn d-flex align-items-center justify-content-center" onclick="onTaskDeleteBtnClick('task-@taskResponseModelList[i].TaskId', '@taskResponseModelList[i].TaskName');">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </div>
+                    </td>
+                    <td class="align-middle">@taskResponseModelList[i].TaskId</td>
+                    <td class="align-middle text-capitalize">@taskResponseModelList[i].TaskName</td>
+                    <td class="align-middle text-capitalize">@taskResponseModelList[i].TaskDescription</td>
+                    <td class="align-middle text-capitalize">
+                        @if (taskResponseModelList[i].AssignedEmployees != null && taskResponseModelList[i].AssignedEmployees.Any())
+                        {
+                            // Display assigned employees separated by commas
+                            @string.Join(", ", taskResponseModelList[i].AssignedEmployees.Select(e => e.EmployeeName))
+                        }
+                        else
+                        {
+                            // Display a default message if no employees are assigned
+                            <span>No assigned employees</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function errorMessageReceived() {
+        var returnMessage = '@ViewBag.Error';
+
+        if (returnMessage) {
+            showAlertDialog({
+                icon: 'warning',
+                title: returnMessage,
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        // Close the modal when the close button is clicked
+        $('#closeTaskDetailsModal').on('click', function () {
+            $('#taskDetailsModal').modal('hide');
+        });
+
+        // If Any Error Message Received
+        errorMessageReceived();
+    });
+</script>
+
+<script>
+    function toSentenceCase(str) {
+        return str.replace(/\w\S*/g, function (txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+    }
+
+    function onTaskDeleteBtnClick(itemId, itemName) {
+        //The event.stopPropagation() ensures that clicking on the trash icon doesn't trigger the container click event
+        event.stopPropagation();
+
+        //Show Confitmation Dialog
+        showDeleteConfirmationDialog({
+            icon: 'warning',
+            title: "Are You Sure You Want To Delete: '" + toSentenceCase(itemName) + "'?",
+            functionToCall: function () {
+                deleteTaskData(itemId);
+            },
+        });
+    }
+</script>
+
+<script>
+    function deleteTaskData(itemId) {
+        $.ajax({
+            type: "POST",
+            url: "/Task/DeleteTask",
+            data: {
+                itemId: itemId.split("-")[1],
+            },
+            dataType: "JSON",
+            success: function (response) {
+                if (response != null) {
+                    if (response == "Success") {
+                        showAlertDialog({
+                            icon: 'success',
+                            title: response,
+                            functionToCall: function () {
+                                $("#" + itemId).remove();
+                            },
+                        });
+                    }
+                    else {
+                        showAlertDialog({
+                            icon: 'warning',
+                            title: response,
+                        });
+                    }
+                } else {
+                    showAlertDialog({
+                        icon: 'error',
+                        title: 'Something Went Wrong. Delete Data Failed'
+                    });
+                }
+            },
+            failure: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Failure'
+                });
+            },
+            error: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Error'
+                });
+            }
+        });
+    }
+</script>
+
+<script>
+    function onTaskRowClick(taskId) {
+        // Check if the click is not on the delete button (first column)
+        if (!$(event.target).closest('.deleteBtn').length) {
+            getTaskDataById(taskId);
+        }
+    }
+</script>
+
+<script>
+    function showTaskDetailsModal(response) {
+        $('#taskModalId').text(response.TaskId);
+        $('#taskModalName').text(response.TaskName);
+        $('#taskModalDescription').text(response.TaskDescription);
+
+        var assignedEmployeesList = $('#taskModalAssignedEmployees');
+        assignedEmployeesList.empty();
+
+        if (response.AssignedEmployees && response.AssignedEmployees.length > 0) {
+            response.AssignedEmployees.forEach(function (employee) {
+                var employeeItem = $('<li>').text(`Employee ID: ${employee.EmployeeId}, Employee Name: ${employee.EmployeeName}`);
+                assignedEmployeesList.append(employeeItem);
+            });
+        } else {
+            assignedEmployeesList.append($('<li>').text('No assigned employees'));
+        }
+    }
+
+    function getTaskDataById(itemId) {
+        $.ajax({
+            type: "POST",
+            url: "/Task/GetTaskById",
+            data: {
+                dataToLoad: itemId.split("-")[1],
+            },
+            dataType: "JSON",
+            success: function (response) {
+                if (response != null) {
+                    showTaskDetailsModal(JSON.parse(response));
+                    $('#taskDetailsModal').modal('show'); // Show the modal
+                } else {
+                    showAlertDialog({
+                        icon: 'error',
+                        title: 'Something Went Wrong. Get Data Failed'
+                    });
+                }
+            },
+            failure: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Failure'
+                });
+            },
+            error: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Error'
+                });
+            }
+        });
+    }
+</script>

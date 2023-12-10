@@ -1,0 +1,216 @@
+﻿<div class="top-0 right-5 newEmployeeDiv">
+    <button type="button" id="AddButtonDiv" class="btn btn-sm p-2 shadow-none addEmployeeBtn" onclick="toggleAddEmployeeDiv()">
+        <i class="fas fa-plus fa-lg me-3"></i>
+        New Employee
+    </button>
+    <div id="EmployeeDiv" class="employeeDiv">
+        <div class="p-2 text-white text-center newEmployeeTitleDiv">
+            <span>NEW EMPLOYEE</span>
+        </div>
+        <div id="AddNewEmployee" class="p-4 my-2">
+            @* EMPLOYEE NAME *@
+            <div class="d-flex flex-row align-items-center form-outline inputEmployeeName" style="margin-bottom: 16px;">
+                <i class="fas fa-signature fa-lg me-3 mt-1"></i>
+                <div class="form-outline flex-fill mb-0 inner-addon left-addon field-wrapper">
+                    <input type="text" name="EmployeeName" id="EmployeeName" class="form-control shadow-none text-capitalize" value="">
+                    <label class="field-placeholder"><span>Employee Name</span></label>
+                </div>
+            </div>
+            @* EMPLOYEE ROLE *@
+            <div class="d-flex flex-row align-items-center form-outline inputEmployeeRole" style="margin-bottom: 16px;">
+                <i class="fas fa-address-card fa-lg me-3 mt-1"></i>
+                <div class="form-outline flex-fill mb-0 inner-addon left-addon field-wrapper">
+                    <input type="text" name="EmployeeRole" id="EmployeeRole" class="form-control shadow-none text-capitalize" value="">
+                    <label class="field-placeholder"><span>Role</span></label>
+                </div>
+            </div>
+            <div class="py-2">
+                @* BUTTON *@
+                <button type="submit" class="btn btn-sm custom-btn btn-block px-3 waves-effect waves-light rounded-pill w-100 shadow-sm mb-2" onclick="onSubmitBtnClickedAddNewEmployee();">
+                    <i class="fas fa-check fa-lg me-3"></i>
+                    Save
+                </button>
+                @* CLOSE BUTTON *@
+                <button type="button" class="btn btn-sm btn-danger btn-block px-3 waves-effect waves-light rounded-pill w-100 shadow-sm" onclick="toggleAddEmployeeDiv()">
+                    <i class="fas fa-times fa-lg me-3"></i>
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* ADD EMPLOYEE DIV *@
+<script>
+    function toggleAddEmployeeDiv() {
+        var employeeForm = $('#EmployeeDiv');
+        var addButton = $('#AddButtonDiv');
+
+        if (employeeForm.is(':hidden')) {
+            addButton.slideUp('fast', function () {
+                employeeForm.slideDown('fast');
+                $("#EmployeeName").focus();
+            });
+        } else {
+            employeeForm.slideUp('fast', function () {
+                addButton.slideDown('fast');
+                clearAddEmployeeInputValues();
+            });
+        }
+    }
+</script>
+
+<script>
+    function onSubmitBtnClickedAddNewEmployee() {
+
+        // Prevent the form from actually submitting
+        event.preventDefault();
+
+        var employeeNameElem = $("#EmployeeName");
+        var employeeRoleElem = $("#EmployeeRole");
+
+        if (validateEmployeeInputData() == false) {
+            return;
+        }
+
+        var addNewEmpObj = {};
+
+        addNewEmpObj.employeeName = employeeNameElem.val().trim();
+        addNewEmpObj.roleName = employeeRoleElem.val().trim();
+
+        var jsonStringfyAddNewEmployeeData = JSON.stringify(addNewEmpObj);
+
+        $.ajax({
+            type: "POST",
+            url: "/Employee/CreateNewEmployee",
+            data: {
+                dataToLoad: jsonStringfyAddNewEmployeeData
+            },
+            dataType: "JSON",
+            success: function (response) {
+                if (response != null) {
+                    try {
+
+                        var createdEmployeeObj = JSON.parse(response);
+
+                        showAlertDialog({
+                            icon: 'success',
+                            title: "Success",
+                            functionToCall: function () {
+                                addNewEmployeeAfterCreation({
+                                    employeeId: createdEmployeeObj.EmployeeId,
+                                    employeeName: createdEmployeeObj.EmployeeName,
+                                });
+
+                                // Clear the values after add success
+                                clearAddEmployeeInputValues();
+                            },
+                        });
+                    }
+                    catch (ex) {
+                        showAlertDialog({
+                            icon: 'warning',
+                            title: response,
+                        });
+                    }
+                } else {
+                    showAlertDialog({
+                        icon: 'error',
+                        title: "Something Went Wrong. Add New Employee Failed",
+                    });
+                }
+            },
+            failure: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: "Something Went Wrong Failure",
+                });
+            },
+            error: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: "Something Went Wrong Error",
+                });
+            }
+        });
+    }
+</script>
+
+<script>
+    function validateEmployeeInputData() {
+        var employeeNameElem = $("#EmployeeName");
+
+        //Employee Name Validation Starts Here
+
+        if (!employeeNameElem.val().trim()) {
+            showAlertDialog({
+                icon: 'warning',
+                title: "Employee Name Cannot be Empty",
+                functionToCall: employeeNameElem.focus(),
+            });
+            return false;
+        }
+
+        if (checkAtLeastOneString(employeeNameElem.val()) == false) {
+            showAlertDialog({
+                icon: 'warning',
+                title: "Employee Name Should Contain at-least one character And Not Start With Number",
+                functionToCall: employeeNameElem.focus()
+            });
+            return false;
+        }
+
+        if (notAllowSpecialCharacter(employeeNameElem.val().trim()) == false) {
+            showAlertDialog({
+                icon: 'warning',
+                title: "Employee Name Should Not Have Special Characters",
+                functionToCall: employeeNameElem.focus()
+            });
+            return false;
+        }
+
+        //Employee Name Validation Ends Here
+    }
+
+    function checkAtLeastOneString(value) {
+        return /^[a-zA-Z\u0621-\u064A]/i.test(value);
+    }
+
+    function notAllowSpecialCharacter(value) {
+        return /^[a-zA-Z0-9 ]*$/i.test(value);
+    }
+</script>
+
+<script>
+    function addNewEmployeeAfterCreation({ employeeId = null, employeeName = null } = {}) {
+        // Create the employee card HTML
+        var employeeCard = `
+                                        <div id="employee-${employeeId}" class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 col-2xl-3 p-2 d-flex" onclick="getTaskDataById('employee-${employeeId}')">
+                                <div class="card card-body p-0 employeeCardBody">
+                                    <div class="d-flex d-flex-wrap">
+                                        <div class="p-3 text-white employeeCardBodyIdLabel d-flex align-items-center">
+                                            ${employeeId}
+                                        </div>
+                                            <div class="p-3 d-flex align-items-center text-capitalize">
+                                            ${employeeName}
+                                        </div>
+                                        <div class="p-3 ms-auto deleteBtn d-flex align-items-center" onclick="onEmployeeDeleteBtnClick('employee-${employeeId}', '${employeeName}');">
+                                            <i class="fa-regular fa-trash-can"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+        // Prepend the new employee card to the employeeContainerDiv
+        $("#employeeContainerDiv").prepend(employeeCard);
+    }
+</script>
+
+<script>
+    function clearAddEmployeeInputValues() {
+        // Clear Inputs and Remove Floating Label Up
+        $("#EmployeeName").val('').closest(".field-wrapper").removeClass("hasValue");
+        $("#EmployeeRole").val('').closest(".field-wrapper").removeClass("hasValue");
+    }
+</script>

@@ -1,0 +1,212 @@
+﻿@using TaskAssignmentSystemWebApp.Models.Employee
+
+@{
+    List<EmployeeResponseModel> employeeResponseModelList = new();
+
+    if (ViewBag.Success != null)
+    {
+        employeeResponseModelList = ViewBag.Success;
+    }
+}
+
+@* Region PopUp Div For OnCLick Starts Here *@
+
+<!-- Modal -->
+<div class="modal fade" id="employeeDetailsModal" tabindex="-1" role="dialog" aria-labelledby="employeeDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="employeeDetailsModalLabel">Employee Details</h5>
+                <button id="closeEmployeeDetailsModal" type="button" class="close btn btn-danger shadow-none" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">
+                        <i class="fa-solid fa-xmark"></i>
+                    </span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Employee ID: <span id="employeeModalId" class="text-capitalize"></span></p>
+                <p>Employee Name: <span id="employeeModalName" class="text-capitalize"></span></p>
+                <p>Role Name: <span id="employeeModalRole" class="text-capitalize"></span></p>
+                <p>Assigned Tasks:</p>
+                <ul id="employeeModalAssignedTasks" class="text-capitalize"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Region PopUp Div For OnClick Ends Here *@
+
+<div class="container container-fluid py-5">
+    <div class="container shadow p-3 mb-5 bg-white user-select-none roundedBody">
+        @* NEW EMPLOYEE  *@
+        <div class="row" id="employeeContainerDiv">
+            @* LIST OF EMPLOYEES *@
+            @for (int i = 0; i < employeeResponseModelList.Count; i++)
+            {
+                <div id="employee-@employeeResponseModelList[i].EmployeeId" class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 col-2xl-3 p-2 d-flex" onclick="getTaskDataById('employee-@employeeResponseModelList[i].EmployeeId')">
+                    <div class="card card-body p-0 employeeCardBody">
+                        <div class="d-flex d-flex-wrap">
+                            <div class="p-3 text-white employeeCardBodyIdLabel d-flex align-items-center">
+                                @employeeResponseModelList[i].EmployeeId
+                            </div>
+                            <div class="p-3 d-flex align-items-center text-capitalize">
+                                @employeeResponseModelList[i].EmployeeName
+                            </div>
+                            <div class="p-3 ms-auto deleteBtn d-flex align-items-center" onclick="onEmployeeDeleteBtnClick('employee-@employeeResponseModelList[i].EmployeeId', '@employeeResponseModelList[i].EmployeeName');">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function errorMessageReceived() {
+        var returnMessage = '@ViewBag.Error';
+
+        if (returnMessage) {
+            showAlertDialog({
+                icon: 'warning',
+                title: returnMessage,
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        // Close the modal when the close button is clicked
+        $('#closeEmployeeDetailsModal').on('click', function () {
+            $('#employeeDetailsModal').modal('hide');
+        });
+
+        // If Any Error Message Received
+        errorMessageReceived();
+    });
+</script>
+
+<script>
+    function toSentenceCase(str) {
+        return str.replace(/\w\S*/g, function (txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+    }
+
+    function onEmployeeDeleteBtnClick(itemId, itemName) {
+        //The event.stopPropagation() ensures that clicking on the trash icon doesn't trigger the container click event
+        event.stopPropagation();
+
+        //Show Confitmation Dialog
+        showDeleteConfirmationDialog({
+            icon: 'warning',
+            title: "Are You Sure You Want To Delete: '" + toSentenceCase(itemName) + "'?",
+            functionToCall: function () {
+                deleteEmployeeData(itemId);
+            },
+        });
+    }
+</script>
+
+<script>
+    function deleteEmployeeData(itemId) {
+        $.ajax({
+            type: "POST",
+            url: "/Employee/DeleteEmployee",
+            data: {
+                itemId: itemId.split("-")[1],
+            },
+            dataType: "JSON",
+            success: function (response) {
+                if (response != null) {
+                    if (response == "Success") {
+                        showAlertDialog({
+                            icon: 'success',
+                            title: response,
+                            functionToCall: function () {
+                                $("#" + itemId).remove();
+                            },
+                        });
+                    }
+                    else {
+                        showAlertDialog({
+                            icon: 'warning',
+                            title: response,
+                        });
+                    }
+                } else {
+                    showAlertDialog({
+                        icon: 'error',
+                        title: 'Something Went Wrong. Delete Data Failed'
+                    });
+                }
+            },
+            failure: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Failure'
+                });
+            },
+            error: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Error'
+                });
+            }
+        });
+    }
+</script>
+
+<script>
+    function showEmployeeDetailsModal(response) {
+        $('#employeeModalId').text(response.EmployeeId);
+        $('#employeeModalName').text(response.EmployeeName);
+        $('#employeeModalRole').text(response.RoleName);
+
+        var assignedTasksList = $('#employeeModalAssignedTasks');
+        assignedTasksList.empty();
+
+        if (response.AssignedTasks && response.AssignedTasks.length > 0) {
+            response.AssignedTasks.forEach(function (task) {
+                var taskItem = $('<li>').text(`Task ID: ${task.TaskId}, Task Name: ${task.TaskName}, Task Description: ${task.TaskDescription}`);
+                assignedTasksList.append(taskItem);
+            });
+        } else {
+            assignedTasksList.append($('<li>').text('No assigned tasks'));
+        }
+    }
+
+    function getTaskDataById(itemId) {
+        $.ajax({
+            type: "POST",
+            url: "/Employee/GetEmployeeById",
+            data: {
+                dataToLoad: itemId.split("-")[1],
+            },
+            dataType: "JSON",
+            success: function (response) {
+                if (response != null) {
+                    showEmployeeDetailsModal(JSON.parse(response));
+                    $('#employeeDetailsModal').modal('show'); // Show the modal
+                } else {
+                    showAlertDialog({
+                        icon: 'error',
+                        title: 'Something Went Wrong. Get Data Failed'
+                    });
+                }
+            },
+            failure: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Failure'
+                });
+            },
+            error: function (response) {
+                showAlertDialog({
+                    icon: 'error',
+                    title: 'Something Went Wrong Error'
+                });
+            }
+        });
+    }
+</script>

@@ -1,0 +1,28 @@
+﻿.newTaskCardHeader {
+    background-color: #36324e;
+}
+
+.roundedBody {
+    border-radius: 14px;
+}
+
+.taskTable {
+    user-select: none;
+    cursor: pointer;
+}
+
+    .taskTable thead tr {
+        background-color: #36324e;
+    }
+
+.deleteBtn {
+    color: #000000;
+    background-color: transparent;
+    transition: background-color 0.3s;
+}
+
+    .deleteBtn:hover i {
+        color: #ff0000;
+        transform: scale(1.2);
+        transition: transform 0.3s ease-in-out;
+    }

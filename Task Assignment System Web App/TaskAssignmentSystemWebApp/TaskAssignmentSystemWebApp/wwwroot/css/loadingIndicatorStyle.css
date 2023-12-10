@@ -1,0 +1,27 @@
+﻿.modalLoadingIndicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: white;
+    z-index: 2147483649 !important;
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+    -moz-opacity: 0.5;
+    min-height: 100%;
+    width: 100%;
+}
+
+.loading {
+    font-family: Arial;
+    font-size: 10pt;
+    font-weight: bold;
+    /*border: 3px solid #007bff;*/
+    /*border: 3px solid #ffffff;*/
+    width: 200px;
+    height: 135px;
+    display: none;
+    position: fixed;
+    background-color: white;
+    user-select: none;
+    z-index: 21474836499 !important;
+}

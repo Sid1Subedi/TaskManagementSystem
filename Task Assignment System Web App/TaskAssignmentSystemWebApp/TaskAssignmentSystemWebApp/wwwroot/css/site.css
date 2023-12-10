@@ -1,0 +1,82 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.custom-btn {
+    background-color: #36324e; /* Default color - VMS Color PPL */
+    color: #fff; /* Text color, assuming white for contrast */
+    /* Add other styling properties like padding, border, etc. based on your design */
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+    .custom-btn:hover {
+        color: #fff;
+        background-color: #4a4563; /* Hover color */
+    }
+
+body, html {
+    /*height: 100vh !important;*/
+    background-repeat: no-repeat; /*background-image: linear-gradient(rgb(12, 97, 33),rgb(104, 145, 162));*/
+    /*background: #28243c;
+    color: #ffffff;*/
+    position: relative;
+    background-color: #f8f7fa;
+    /*margin-top: 3rem;*/
+    min-height: 70vh;
+    max-height: 91vh;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* 
+*  ScrollBar Style Starts Here
+*/
+*::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #424242;
+    border-radius: 25px;
+}
+
+*::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+    background-color: #424242;
+    border-radius: 25px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #7b7b7b;
+    border-radius: 25px;
+    border: 2px solid #28243c !important;
+}
+
+/*
+*  ScrollBar Style Ends Here
+*/
